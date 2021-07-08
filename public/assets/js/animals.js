@@ -1,10 +1,12 @@
 const $animalForm = document.querySelector('#animals-form');
 const $displayArea = document.querySelector('#display-area');
 
-const printResults = resultArr => {
+const printResults = resultArr =>
+{
   console.log(resultArr);
 
-  const animalHTML = resultArr.map(({ id, name, personalityTraits, species, diet }) => {
+  const animalHTML = resultArr.map(({ id, name, personalityTraits, species, diet }) =>
+  {
     return `
   <div class="col-12 col-md-5 mb-3">
     <div class="card p-3" data-id=${id}>
@@ -22,36 +24,60 @@ const printResults = resultArr => {
   $displayArea.innerHTML = animalHTML.join('');
 };
 
-const getAnimals = (formData = {}) => {
+const getAnimals = (formData = {}) =>
+{
   let queryUrl = '/api/animals?';
 
-  Object.entries(formData).forEach(([key, value]) => {
+  Object.entries(formData).forEach(([key, value]) =>
+  {
     queryUrl += `${key}=${value}&`;
   });
 
   console.log(queryUrl);
 
+  fetch(queryUrl)
+    .then(response =>
+    {
+      if (!response.ok)
+      {
+        return alert('Error: ' + response.statusText);
+      }
+      return response.json();
+    })
+    .then(animalData =>
+    {
+      console.log(animalData);
+      printResults(animalData);
+    })
+    .catch(err => {
+      console.log(err);
+    });
 };
 
-const handleGetAnimalsSubmit = event => {
+const handleGetAnimalsSubmit = event =>
+{
   event.preventDefault();
   const dietRadioHTML = $animalForm.querySelectorAll('[name="diet"]');
   let diet;
 
-  for (let i = 0; i < dietRadioHTML.length; i += 1) {
-    if (dietRadioHTML[i].checked) {
+  for (let i = 0; i < dietRadioHTML.length; i += 1)
+  {
+    if (dietRadioHTML[i].checked)
+    {
       diet = dietRadioHTML[i].value;
     }
   }
 
-  if (diet === undefined) {
+  if (diet === undefined)
+  {
     diet = '';
   }
 
   const personalityTraitArr = [];
   const selectedTraits = $animalForm.querySelector('[name="personality"').selectedOptions;
 
-  for (let i = 0; i < selectedTraits.length; i += 1) {
+  for (let i = 0; i < selectedTraits.length; i += 1)
+  {
     personalityTraitArr.push(selectedTraits[i].value);
   }
 
